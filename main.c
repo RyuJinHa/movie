@@ -17,16 +17,8 @@ int main(int argc, char *argv[]) {
 	int exit_flag = 0; //flag variable for while loop
 	int option; //user input option
 	void *list, *mvInfo; //pointers for linked list and a specific structure instance for a movie data
-	int (*repFunc)(void* obj, void* arg); //function pointer for using list_repeatFunc() function
-	void *arg; //a void pointer for passing argument to repFunc
-	int cnt; //integer variable
-
-	typedef struct movInfo {
-		char name[100];
-		float score;
-		int runTime;
-		char madeIn[10];
-	} movInfo_t;
+	void *ndPtr; //void pointer for linked list node
+	
 
 	//1. reading the movie.dat-----------------------------
 	//1.1 FILE open
@@ -35,67 +27,82 @@ int main(int argc, char *argv[]) {
 	list = list_genList();
 	
 	//1.3 read each movie data from the file and add it to the linked list
-	while ( 1 )/* read name, country, runtime and score*/
+	while (fgetc(fp)!=EOF) /* read name, country, runtime and score*/ 
 	{	
 		//generate a movie info instance(mvInfo) with function mv_genMvInfo()
-		
-		mv_genMvInfo(name, score, runTime, country);
-		cnt=fscanf(fp, "%c %c %d %f", name, country, runTime, score);
-			if(cnt==EOF)
-				break;
-		
-		printf("%c %c %d %f", name, country, runTime, score);
-	
+		fscanf(fp, "%s %s %d %f",&name,&country,&runTime,&score);
+		mvInfo=mv_genMvInfo(name, score, runTime, country);
 		list_addTail(mvInfo, list);
+		mv_print(mvInfo);
+		
 	}
+	printf("Reading the data files\n");
+	printf("read done! %d items are read\n\n",list_len(list));
 
 	//1.4 FILE close
-		fclose(fp);
+	fclose(fp);
 	//2. program start
-	while(exit_flag == 0)
-	{	
+	while(exit_flag == 0) 
+	{
 		//2.1 print menu message and get input option
 		printf("------------------Menu------------------\n");
-		printf("1. print all the movies in the list \n2. search for specific country movies \n3. search for specific runtime movies n\4. search for specific score movies \n5. exit\n ");
+		printf("1. print all the movies in the list \n2. search for specific country movies \n3. search for specific runtime movies \n");
+		printf("4. search for specific score movies \n5. exit\n");
+		printf("------------------Menu------------------\n");
 		printf("select an option : ");
 		scanf("%d",&option);
 		
 		switch(option)
 		{
 			case 1: //print all the movies
-				printf("\nprinting all the movies in the list.....\n\n\n");
+				printf("\nprinting all the movies in the list.....\n");
 				printf("-------------------------------------------\n");
 				
-				repFunc = mv_printAll;
-				arg = NULL;
-				break;
+				ndPtr = list;
+				while ( list_isEndNode(ndPtr) == 0) /* repeat until the ndPtr points to the end node */
+				{
+					//2.2 print a movie data : use functions of movie.c and linkedList.c
+					//ndPtr = the next node of the ndPtr;
+					ndPtr=list_getNextNd(ndPtr);
+					//get object of ndPtr to mvInfo void pointer
+					mvInfo=list_getNdObj(ndPtr);
+					//print the contents of the mvInfo
+					mv_print(mvInfo);
+				}
 				
+				break;
 			case 2: //print movies of specific country
+				//2.3.1 get country name to search for
 				printf("\nsearching for specific country movies..... \n\n\n");
+				ndPtr = list;
+					while ( list_isEndNode(ndPtr) == 0)/* repeat until the ndPtr points to the end node */
+				{
+					//2.3.2 print a movie data : use functions of movie.c and linkedList.c
+					char input;
+					
+					//ndPtr = the next node of the ndPtr;
+					ndPtr=list_getNextNd(ndPtr);
+					//get object of ndPtr to mvInfo void pointer
+					mvInfo=list_getNdObj(ndPtr);
+					
+					//if the input country matches to the country of the movie,
+					printf("input a country to find: ");
+					scanf("%s",&input);
+					list_srchNd(int (*matchFunc)(void* obj, void* cond), void* cond, void* list);
+					
+					
+					//then print the contents of the mvInfo
+					mv_print(mvInfo);
+				}
+				
 				break;
 				
-			case 3: //print movies with long runtime
-				printf("\nsearching for specific runtime movies..... \n\n\n");
-
-				break;
-				
-			case 4: //print movies with high score
-				printf("\nsearch for specific score movies..... \n\n\n");
-				break;
-				
-			case 5:
-				printf("\n\nBye!\n\n");
-				exit_flag = 1;
-				
-				break;
-				
+		
+		
 			default:
 				printf("wrong command! input again\n");
 				break;
 		}
-		
-		//2.2 printing operation by function pointer (list_repeatFunc() is called here)
-		//2.3 print number of movies
 	}
 	
 	return 0;
