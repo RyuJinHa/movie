@@ -45,37 +45,12 @@ void mv_print(void* obj)
 }
 
 
-//return the score value from the input instance of movInfo_t structure
-float mv_getScore(void* obj)
-{
-	
-}
-
-//return the runtime value from the input instance of movInfo_t structure
-int mv_getRunTime(void* obj)
-{
-	
-}
-
-//return the name string pointer from the input instance of movInfo_t structure
-char* mv_getName(void* obj)
-{
-	
-}
-
 //return the country string pointer from the input instance of movInfo_t structure
 char* mv_getCountry(void* obj)
 {
-	char input[100]={0};
-	movInfo_t* mvPtr;
-	obj=mvPtr->madeIn;
+	movInfo_t* mvPtr = (movInfo_t*)obj;
 	
-	printf("input a country to find: ");
-	scanf("%s",&input);
-	if((mvPtr!=NULL)&&(strcmp(input, mvPtr->madeIn)))
-	{
-	
-	}
+	return mvPtr->madeIn;
 }
 
 

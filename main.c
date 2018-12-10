@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 	int option; //user input option
 	void *list, *mvInfo; //pointers for linked list and a specific structure instance for a movie data
 	void *ndPtr; //void pointer for linked list node
-	
+		
 
 	//1. reading the movie.dat-----------------------------
 	//1.1 FILE open
@@ -33,8 +33,6 @@ int main(int argc, char *argv[]) {
 		fscanf(fp, "%s %s %d %f",&name,&country,&runTime,&score);
 		mvInfo=mv_genMvInfo(name, score, runTime, country);
 		list_addTail(mvInfo, list);
-		mv_print(mvInfo);
-		
 	}
 	printf("Reading the data files\n");
 	printf("read done! %d items are read\n\n",list_len(list));
@@ -73,35 +71,31 @@ int main(int argc, char *argv[]) {
 				break;
 			case 2: //print movies of specific country
 				//2.3.1 get country name to search for
-				printf("\nsearching for specific country movies..... \n\n\n");
 				ndPtr = list;
-					while ( list_isEndNode(ndPtr) == 0)/* repeat until the ndPtr points to the end node */
+				char inputCountry[100];
+			
+				printf("input a country to find: ");
+				scanf("%s\n",inputCountry);
+				
+				while ( list_isEndNode(ndPtr) == 0)/* repeat until the ndPtr points to the end node */
 				{
 					//2.3.2 print a movie data : use functions of movie.c and linkedList.c
-					char input;
-					
+				
 					//ndPtr = the next node of the ndPtr;
 					ndPtr=list_getNextNd(ndPtr);
 					//get object of ndPtr to mvInfo void pointer
 					mvInfo=list_getNdObj(ndPtr);
 					
 					//if the input country matches to the country of the movie,
-					printf("input a country to find: ");
-					scanf("%s",&input);
-					list_srchNd(int (*matchFunc)(void* obj, void* cond), void* cond, void* list);
-					
-					
+					if(strcmp(mv_getCountry(mvInfo),inputCountry)==0)
+					{
+						mv_print(mvInfo);
+					}
 					//then print the contents of the mvInfo
-					mv_print(mvInfo);
 				}
-				
 				break;
 				
-		
-		
-			default:
-				printf("wrong command! input again\n");
-				break;
+			
 		}
 	}
 	
